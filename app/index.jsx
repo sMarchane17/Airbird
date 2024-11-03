@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Button } from 'react-native';
 //import localImage from './assets/AirBird.PNG';
+import { Link } from 'expo-router'; 
 
 
 
@@ -18,6 +19,7 @@ const IndexScreen = () => {
         color="#1E90FF" 
         onPress={() => alert('Button pressed!')} 
       />
+      <Link href="/profile" style={{color: 'white'}}> Profile </Link>
     </View>
   );
 };
