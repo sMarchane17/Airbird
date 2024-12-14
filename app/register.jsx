@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'expo-router';
 import {
   View,
   Text,
@@ -75,9 +76,9 @@ const App = () => {
         </TouchableOpacity>
 
         {/* Bouton Sign Up */}
-        <TouchableOpacity style={styles.signUpButton}>
-          <Text style={styles.buttonText}>Sign up</Text>
-        </TouchableOpacity>
+        <Link href="/signup" style={styles.signUpButton}>
+          <Text style={styles.buttonText}>Sign Up !</Text>
+        </Link>
       </View>
     </View>
   );
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 5,
     alignItems: 'center',
+    marginBottom: 10,
   },
   buttonText: {
     color: '#fff',
