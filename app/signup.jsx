@@ -15,16 +15,16 @@ const SignUp = ({ navigation }) => {
 
   const validateAndSubmit = () => {
     if (password !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas.');
+      setError('Passwords do not match.');
       return;
     }
     if (password.length < 8) {
-      setError('Le mot de passe doit contenir au moins 8 caractères.');
+      setError('The password must contain at least 8 characters.');
       return;
     }
     setError('');
     // Logique pour soumettre les données (API ou autre)
-    alert('Inscription réussie!');
+    alert('Registration successful!');
   };
 
   return (
@@ -38,7 +38,7 @@ const SignUp = ({ navigation }) => {
         onChangeText={setEmail}
       />
 
-      <Text style={styles.label}>Mot de passe</Text>
+      <Text style={styles.label}>Password</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your password"
@@ -48,10 +48,10 @@ const SignUp = ({ navigation }) => {
         onChangeText={setPassword}
       />
       {password.length < 8 && password.length > 0 && (
-        <Text style={styles.error}>Le mot de passe doit contenir au moins 8 caractères.</Text>
+        <Text style={styles.error}>The password must contain at least 8 characters..</Text>
       )}
 
-      <Text style={styles.label}>Confirmer le mot de passe</Text>
+      <Text style={styles.label}>Confirm your password.</Text>
       <TextInput
         style={styles.input}
         placeholder="Confirmez votre mot de passe"
@@ -61,13 +61,13 @@ const SignUp = ({ navigation }) => {
         onChangeText={setConfirmPassword}
       />
       {confirmPassword && confirmPassword !== password && (
-        <Text style={styles.error}>Les mots de passe ne correspondent pas.</Text>
+        <Text style={styles.error}>Passwords do not match.</Text>
       )}
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <TouchableOpacity style={styles.signUpButton} onPress={validateAndSubmit}>
-        <Text style={styles.buttonText}>S'inscrire</Text>
+        <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
     </View>
   );
