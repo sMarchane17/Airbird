@@ -1,35 +1,44 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { auth } from './firebaseConfig'; // Importer la configuration Firebase
-import { createUserWithEmailAndPassword } from 'firebase/auth'; // Importer la fonction d'inscription de Firebase Auth
+import { auth } from './firebaseConfig'; // Ajustez le chemin selon votre structure
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { useRouter } from 'expo-router'; // Changement ici pour useRouter
 
-const SignUp = ({ navigation }) => {
+const SignUp = () => {
+  const router = useRouter(); // Initialisation du router
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
-  const validateAndSubmit = () => {
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-    if (password.length < 8) {
-      setError('The password must contain at least 8 characters.');
-      return;
-    }
-    setError('');
+  const validateAndSubmit = async () => {
+    try {
+      if (password !== confirmPassword) {
+        setError('Passwords do not match.');
+        return;
+      }
+      if (password.length < 8) {
+        setError('The password must contain at least 8 characters.');
+        return;
+      }
+      setError('');
 
-    // Inscription avec Firebase Auth
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        alert('Registration successful!');
-        // Naviguer vers une autre page après l'inscription
-        navigation.navigate('Home'); // Remplacez 'Home' par le nom de votre écran
-      })
-      .catch((error) => {
-        setError(error.message); // Afficher l'erreur si l'inscription échoue
-      });
+      // Inscription avec Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Vérifier si l'inscription a réussi
+      if (userCredential.user) {
+        console.log("Signup successful, redirecting..."); // Debug log
+        
+        // Attendre un court instant pour s'assurer que Firebase a terminé
+        setTimeout(() => {
+          router.push('/home');
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Signup error:", error); // Debug log
+      setError(error.message);
+    }
   };
 
   return (
@@ -41,6 +50,8 @@ const SignUp = ({ navigation }) => {
         placeholderTextColor="#aaa"
         value={email}
         onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
       />
 
       <Text style={styles.label}>Password</Text>
@@ -83,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#a6c1ee',
     padding: 20,
   },
   label: {
