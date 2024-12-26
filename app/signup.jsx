@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { auth } from './firebaseConfig'; // Importer la configuration Firebase
+import { createUserWithEmailAndPassword } from 'firebase/auth'; // Importer la fonction d'inscription de Firebase Auth
 
 const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -23,8 +19,17 @@ const SignUp = ({ navigation }) => {
       return;
     }
     setError('');
-    // Logique pour soumettre les données (API ou autre)
-    alert('Registration successful!');
+
+    // Inscription avec Firebase Auth
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        alert('Registration successful!');
+        // Naviguer vers une autre page après l'inscription
+        navigation.navigate('Home'); // Remplacez 'Home' par le nom de votre écran
+      })
+      .catch((error) => {
+        setError(error.message); // Afficher l'erreur si l'inscription échoue
+      });
   };
 
   return (
@@ -48,13 +53,13 @@ const SignUp = ({ navigation }) => {
         onChangeText={setPassword}
       />
       {password.length < 8 && password.length > 0 && (
-        <Text style={styles.error}>The password must contain at least 8 characters..</Text>
+        <Text style={styles.error}>The password must contain at least 8 characters.</Text>
       )}
 
-      <Text style={styles.label}>Confirm your password.</Text>
+      <Text style={styles.label}>Confirm your password</Text>
       <TextInput
         style={styles.input}
-        placeholder="Confirmez votre mot de passe"
+        placeholder="Confirm your password"
         placeholderTextColor="#aaa"
         secureTextEntry
         value={confirmPassword}
@@ -112,11 +117,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     alignSelf: 'flex-start',
     marginBottom: 10,
-  },
-  backText: {
-    marginTop: 20,
-    color: '#0000EE',
-    textDecorationLine: 'underline',
   },
 });
 
