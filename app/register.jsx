@@ -8,18 +8,16 @@ import {
   StyleSheet,
   Image,
   Animated,
-  Keyboard,
 } from 'react-native';
 
 const App = () => {
   const [isFocused, setIsFocused] = useState(false);
   const avatarAnim = useRef(new Animated.Value(0)).current;
 
-  // Fonction pour animer l'avatar
   const handleFocus = () => {
     setIsFocused(true);
     Animated.spring(avatarAnim, {
-      toValue: -20, // L'avatar monte de 20 pixels
+      toValue: -20,
       useNativeDriver: true,
     }).start();
   };
@@ -27,7 +25,7 @@ const App = () => {
   const handleBlur = () => {
     setIsFocused(false);
     Animated.spring(avatarAnim, {
-      toValue: 0, // L'avatar revient à sa position d'origine
+      toValue: 0,
       useNativeDriver: true,
     }).start();
   };
@@ -70,15 +68,15 @@ const App = () => {
           <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
 
+        {/* Bouton Sign Up */}
+        <Link href="/signup" style={[styles.signInButton, styles.signUpButton]}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </Link>
+
         {/* Lien Forgot password */}
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot password?</Text>
         </TouchableOpacity>
-
-        {/* Bouton Sign Up */}
-        <Link href="/signup" style={styles.signUpButton}>
-          <Text style={styles.buttonText}>Sign Up !</Text>
-        </Link>
       </View>
     </View>
   );
@@ -138,16 +136,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   signUpButton: {
-    backgroundColor: '#000',
-    width: '100%',
-    padding: 12,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginBottom: 10,
+    marginTop: 0, // Vous pouvez personnaliser ici si besoin.
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    textAlign: 'center', // Assure l'alignement au centre.
   },
   forgotPassword: {
     marginVertical: 10,

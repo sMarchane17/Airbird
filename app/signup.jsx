@@ -32,7 +32,7 @@ const SignUp = ({ navigation }) => {
       <Text style={styles.label}>Email</Text>
       <TextInput
         style={styles.input}
-        placeholder="Entrez votre email"
+        placeholder="Enter your email"
         placeholderTextColor="#aaa"
         value={email}
         onChangeText={setEmail}
@@ -41,7 +41,7 @@ const SignUp = ({ navigation }) => {
       <Text style={styles.label}>Mot de passe</Text>
       <TextInput
         style={styles.input}
-        placeholder="Entrez votre mot de passe"
+        placeholder="Enter your password"
         placeholderTextColor="#aaa"
         secureTextEntry
         value={password}
@@ -68,10 +68,6 @@ const SignUp = ({ navigation }) => {
 
       <TouchableOpacity style={styles.signUpButton} onPress={validateAndSubmit}>
         <Text style={styles.buttonText}>S'inscrire</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={styles.backText}>Retour</Text>
       </TouchableOpacity>
     </View>
   );
