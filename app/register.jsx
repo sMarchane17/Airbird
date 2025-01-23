@@ -1,16 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { Link, router } from 'expo-router';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated } from 'react-native';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './firebaseConfig';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { useRouter } from 'expo-router';
 
-const App = () => {
+const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [error, setError] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const avatarAnim = useRef(new Animated.Value(0)).current;
+  const router = useRouter();
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -28,18 +28,28 @@ const App = () => {
     }).start();
   };
 
-  const handleSignIn = () => {
+  const handleSignUp = () => {
     setError('');
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        setIsAuthenticated(true);
-        // Redirection vers la page home
-        router.replace('/home');
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+
+        // Envoi de l'email de vérification
+        sendEmailVerification(user)
+          .then(() => {
+            // Redirection vers la page de saisie du code
+            router.push({
+              pathname: '/verify-email',
+              params: { email },
+            });
+          })
+          .catch((err) => {
+            setError('Failed to send verification email. Please try again.');
+          });
       })
       .catch((err) => {
-        setError('Incorrect email or password');
-        setIsAuthenticated(false);
+        setError('Failed to create account. Please try again.');
       });
   };
 
@@ -78,16 +88,8 @@ const App = () => {
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
-        <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
-          <Text style={styles.buttonText}>Sign In</Text>
-        </TouchableOpacity>
-
-        <Link href="/signup" style={[styles.signInButton, styles.signUpButton]}>
+        <TouchableOpacity style={styles.signInButton} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Sign Up</Text>
-        </Link>
-
-        <TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -147,18 +149,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  signUpButton: {
-    marginTop: 0,
-  },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  forgotPassword: {
-    marginVertical: 10,
-    color: '#0000EE',
-    textDecorationLine: 'underline',
   },
   error: {
     color: 'red',
@@ -167,4 +161,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default SignUp;
