@@ -32,14 +32,21 @@ const SignUp = () => {
   const handleSignIn = () => {
     setError('');
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
+      .then((userCredential) => {
+        const user = userCredential.user;
+        
+        if (!user.emailVerified) {
+          setError("Please verify your email before logging in.");
+          return;
+        }
+  
         router.push('/home'); // Redirection après connexion réussie
       })
       .catch(() => {
         setError("Email ou mot de passe incorrect.");
       });
   };
-
+  
   // Redirection vers la page d'inscription
   const goToSignUpPage = () => {
     router.push('/signup');

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { auth } from './firebaseConfig'; // Ajustez le chemin selon votre structure
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { useRouter } from 'expo-router'; // Changement ici pour useRouter
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { auth } from './firebaseConfig'; // Assure-toi que le chemin est correct
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { useRouter } from 'expo-router';
 
 const SignUp = () => {
-  const router = useRouter(); // Initialisation du router
+  const router = useRouter(); // Utilisation du router pour la navigation
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -25,18 +25,26 @@ const SignUp = () => {
 
       // Inscription avec Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Vérifier si l'inscription a réussi
-      if (userCredential.user) {
-        console.log("Signup successful, redirecting..."); // Debug log
-        
-        // Attendre un court instant pour s'assurer que Firebase a terminé
+      const user = userCredential.user;
+
+      if (user) {
+        console.log("Signup successful, sending verification email...");
+
+        // Envoyer un email de vérification
+        await sendEmailVerification(user);
+
+        Alert.alert(
+          "Verification Email Sent",
+          "Please check your inbox and verify your email before logging in."
+        );
+
+        // Rediriger l'utilisateur vers la page de connexion
         setTimeout(() => {
-          router.push('/home');
-        }, 1000);
+          router.push('/login'); // Remplace '/login' par la bonne page
+        }, 2000);
       }
     } catch (error) {
-      console.error("Signup error:", error); // Debug log
+      console.error("Signup error:", error);
       setError(error.message);
     }
   };
@@ -67,7 +75,7 @@ const SignUp = () => {
         <Text style={styles.error}>The password must contain at least 8 characters.</Text>
       )}
 
-      <Text style={styles.label}>Confirm your password</Text>
+      <Text style={styles.label}>Confirm Password</Text>
       <TextInput
         style={styles.input}
         placeholder="Confirm your password"
