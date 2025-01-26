@@ -1,15 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { auth } from './firebaseConfig'; // Assure-toi que le chemin est correct
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 
 const SignUp = () => {
   const router = useRouter(); // Utilisation du router pour la navigation
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
   const [error, setError] = useState('');
+
+  const pickImage = async () => {
+    // Demander la permission d'accéder à la galerie de photos
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status === 'granted') {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setProfileImage(result.assets[0].uri); // Récupérer l'URL de l'image sélectionnée
+      }
+    } else {
+      Alert.alert("Permission denied", "You need to grant permission to access your gallery.");
+    }
+  };
 
   const validateAndSubmit = async () => {
     try {
@@ -51,6 +73,17 @@ const SignUp = () => {
 
   return (
     <View style={styles.container}>
+      {/* Champ Username */}
+      <Text style={styles.label}>Username</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter your username"
+        placeholderTextColor="#aaa"
+        value={username}
+        onChangeText={setUsername}
+      />
+
+      {/* Champ Email */}
       <Text style={styles.label}>Email</Text>
       <TextInput
         style={styles.input}
@@ -62,6 +95,7 @@ const SignUp = () => {
         keyboardType="email-address"
       />
 
+      {/* Champ Password */}
       <Text style={styles.label}>Password</Text>
       <TextInput
         style={styles.input}
@@ -75,6 +109,7 @@ const SignUp = () => {
         <Text style={styles.error}>The password must contain at least 8 characters.</Text>
       )}
 
+      {/* Champ Confirm Password */}
       <Text style={styles.label}>Confirm Password</Text>
       <TextInput
         style={styles.input}
@@ -86,6 +121,15 @@ const SignUp = () => {
       />
       {confirmPassword && confirmPassword !== password && (
         <Text style={styles.error}>Passwords do not match.</Text>
+      )}
+
+      {/* Sélection de l'image de profil */}
+      <Text style={styles.label}>Profile Picture</Text>
+      <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+        <Text style={styles.buttonText}>Choose Profile Picture</Text>
+      </TouchableOpacity>
+      {profileImage && (
+        <Image source={{ uri: profileImage }} style={styles.profileImage} />
       )}
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -136,6 +180,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     alignSelf: 'flex-start',
     marginBottom: 10,
+  },
+  imageButton: {
+    backgroundColor: '#000',
+    padding: 12,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginTop: 10,
   },
 });
 
