@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Animated } from 'react-native';
 import { auth } from './firebaseConfig';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'expo-router';
 
 const SignUp = () => {
@@ -28,29 +28,21 @@ const SignUp = () => {
     }).start();
   };
 
-  const handleSignUp = () => {
+  // Connexion de l'utilisateur
+  const handleSignIn = () => {
     setError('');
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-
-        // Envoi de l'email de vérification
-        sendEmailVerification(user)
-          .then(() => {
-            // Redirection vers la page de saisie du code
-            router.push({
-              pathname: '/verify-email',
-              params: { email },
-            });
-          })
-          .catch((err) => {
-            setError('Failed to send verification email. Please try again.');
-          });
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        router.push('/home'); // Redirection après connexion réussie
       })
-      .catch((err) => {
-        setError('Failed to create account. Please try again.');
+      .catch(() => {
+        setError("Email ou mot de passe incorrect.");
       });
+  };
+
+  // Redirection vers la page d'inscription
+  const goToSignUpPage = () => {
+    router.push('/signup');
   };
 
   return (
@@ -88,7 +80,13 @@ const SignUp = () => {
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
-        <TouchableOpacity style={styles.signInButton} onPress={handleSignUp}>
+        {/* Bouton Sign In */}
+        <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
+
+        {/* Bouton Sign Up qui redirige vers la page d'inscription */}
+        <TouchableOpacity style={styles.signUpButton} onPress={goToSignUpPage}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
@@ -142,12 +140,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   signInButton: {
-    backgroundColor: '#000',
+    backgroundColor: '#007bff',
     width: '100%',
     padding: 12,
     borderRadius: 5,
     alignItems: 'center',
     marginBottom: 10,
+  },
+  signUpButton: {
+    backgroundColor: '#000',
+    width: '100%',
+    padding: 12,
+    borderRadius: 5,
+    alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
