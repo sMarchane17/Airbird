@@ -88,12 +88,12 @@ const SignUp = () => {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         {/* Bouton Sign In */}
-        <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
+          <TouchableOpacity style={[styles.signUpButton, {marginBottom: 10 }]} onPress={handleSignIn}>
           <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
 
         {/* Bouton Sign Up qui redirige vers la page d'inscription */}
-        <TouchableOpacity style={styles.signUpButton} onPress={goToSignUpPage}>
+        <TouchableOpacity style={[styles.signUpButton, {marginTop: 10 }]} onPress={goToSignUpPage}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
